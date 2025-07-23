@@ -5,7 +5,7 @@ const { mockProducts } = require('./populateDB');
 async function populateDatabase() {
   try {
     console.log('Connecting to MongoDB...');
-    await mongoose.connect('mongodb://localhost:27017/almasdimas');
+    await mongoose.connect('mongodb+srv://sosservicesmaroc:8CcWeyFtp97PxOTW@cluster0.rxayflo.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0');
     console.log('Connected to MongoDB');
 
     console.log('Clearing existing products...');
