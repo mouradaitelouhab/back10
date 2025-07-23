@@ -1,169 +1,536 @@
 const mongoose = require('mongoose');
-const { mockUsers, mockProducts, mockCategories } = require('../populateDB');
 
-// Import models
-const User = require('../models/User');
-const Product = require('../models/Product');
-const Category = require('../models/Category');
+// Realistic product data with 20 jewelry items
+const products = [
+  // RINGS (5 products)
+  {
+    _id: new mongoose.Types.ObjectId(),
+    name: 'Bague Solitaire Diamant Luxe',
+    description: 'Magnifique bague solitaire en or jaune 18k sertie d\'un diamant de 1 carat. Cette pièce intemporelle symbolise l\'amour éternel avec son design classique et élégant.',
+    price: 2999,
+    images: ['/images/products/ring1.jpg'],
+    category: 'rings',
+    sellerID: new mongoose.Types.ObjectId(),
+    stockQuantity: 5,
+    status: 'Active',
+    rating: 4.9,
+    reviews: 127,
+    specifications: {
+      material: 'Or jaune 18k',
+      gemstone: 'Diamant 1ct',
+      size: 'Ajustable',
+      weight: '3.2g'
+    },
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    name: 'Bague Brillant Rond Classique',
+    description: 'Bague de fiançailles classique en or blanc 18k avec diamant rond brillant. Design intemporel avec sertissage 6 griffes pour une sécurité optimale.',
+    price: 1899,
+    images: ['/images/products/ring2.jpg'],
+    category: 'rings',
+    sellerID: new mongoose.Types.ObjectId(),
+    stockQuantity: 8,
+    status: 'Active',
+    rating: 4.8,
+    reviews: 89,
+    specifications: {
+      material: 'Or blanc 18k',
+      gemstone: 'Diamant 0.75ct',
+      size: 'Ajustable',
+      weight: '2.8g'
+    },
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    name: 'Bague Lora Solitaire Délicate',
+    description: 'Bague solitaire délicate avec design moderne et épuré. Parfaite pour un style minimaliste et sophistiqué.',
+    price: 1299,
+    images: ['/images/products/ring3.jpg'],
+    category: 'rings',
+    sellerID: new mongoose.Types.ObjectId(),
+    stockQuantity: 12,
+    status: 'Active',
+    rating: 4.7,
+    reviews: 156,
+    specifications: {
+      material: 'Or rose 14k',
+      gemstone: 'Diamant 0.5ct',
+      size: 'Ajustable',
+      weight: '2.1g'
+    },
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    name: 'Bague Harper Classique',
+    description: 'Design classique Harper avec diamant rond dans un sertissage traditionnel. Élégance intemporelle pour toutes les occasions.',
+    price: 1599,
+    images: ['/images/products/ring4.jpg'],
+    category: 'rings',
+    sellerID: new mongoose.Types.ObjectId(),
+    stockQuantity: 6,
+    status: 'Active',
+    rating: 4.6,
+    reviews: 73,
+    specifications: {
+      material: 'Or blanc 14k',
+      gemstone: 'Diamant 0.6ct',
+      size: 'Ajustable',
+      weight: '2.5g'
+    },
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    name: 'Bague Solitaire Confort',
+    description: 'Bague solitaire avec anneau confort-fit pour un port agréable au quotidien. Design moderne avec finition polie.',
+    price: 999,
+    images: ['/images/products/ring5.jpg'],
+    category: 'rings',
+    sellerID: new mongoose.Types.ObjectId(),
+    stockQuantity: 15,
+    status: 'Active',
+    rating: 4.5,
+    reviews: 203,
+    specifications: {
+      material: 'Or blanc 14k',
+      gemstone: 'Diamant 0.4ct',
+      size: 'Ajustable',
+      weight: '2.0g'
+    },
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
 
-/**
- * Script pour peupler MongoDB Atlas avec les données de test
- * Utilise la même logique que populateDB.js mais avec gestion d'erreurs améliorée
- */
-const populateAtlas = async () => {
-  try {
-    // Configuration des URIs de connexion
-    const ATLAS_URI = process.env.MONGODB_ATLAS_URI || process.env.MONGO_ATLAS_URI;
-    const LOCAL_URI = process.env.MONGO_URI || process.env.MONGODB_URI || 'mongodb://localhost:27017/almasdimas';
-    
-    if (!ATLAS_URI) {
-      console.log('⚠️  MONGODB_ATLAS_URI non définie, utilisation de la base locale');
-    }
+  // NECKLACES (5 products)
+  {
+    _id: new mongoose.Types.ObjectId(),
+    name: 'Collier Solitaire Oval Core',
+    description: 'Collier pendentif avec diamant oval solitaire. Design épuré et moderne, parfait pour un look sophistiqué au quotidien.',
+    price: 1799,
+    images: ['/images/products/necklace1.jpg'],
+    category: 'necklaces',
+    sellerID: new mongoose.Types.ObjectId(),
+    stockQuantity: 7,
+    status: 'Active',
+    rating: 4.8,
+    reviews: 92,
+    specifications: {
+      material: 'Or blanc 18k',
+      gemstone: 'Diamant oval 0.8ct',
+      length: '45cm ajustable',
+      weight: '4.2g'
+    },
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    name: 'Pendentif Diamant Bezel',
+    description: 'Pendentif diamant rond de 1.5 carat serti dans un bezel moderne. Chaîne en or incluse pour un ensemble parfait.',
+    price: 2299,
+    images: ['/images/products/necklace2.jpg'],
+    category: 'necklaces',
+    sellerID: new mongoose.Types.ObjectId(),
+    stockQuantity: 4,
+    status: 'Active',
+    rating: 4.9,
+    reviews: 64,
+    specifications: {
+      material: 'Or jaune 18k',
+      gemstone: 'Diamant rond 1.5ct',
+      length: '50cm',
+      weight: '6.8g'
+    },
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    name: 'Collier Athena Diamant',
+    description: 'Collier pendentif Athena avec diamant central et design géométrique moderne. Pièce statement pour les occasions spéciales.',
+    price: 1599,
+    images: ['/images/products/necklace3.jpg'],
+    category: 'necklaces',
+    sellerID: new mongoose.Types.ObjectId(),
+    stockQuantity: 9,
+    status: 'Active',
+    rating: 4.7,
+    reviews: 118,
+    specifications: {
+      material: 'Or rose 14k',
+      gemstone: 'Diamant 0.7ct',
+      length: '42cm ajustable',
+      weight: '5.1g'
+    },
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    name: 'Pendentif Victorian Diamant',
+    description: 'Pendentif de style victorien avec diamants et design vintage exquis. Pièce de collection pour les amateurs d\'antiquités.',
+    price: 3299,
+    images: ['/images/products/necklace4.jpg'],
+    category: 'necklaces',
+    sellerID: new mongoose.Types.ObjectId(),
+    stockQuantity: 2,
+    status: 'Active',
+    rating: 4.9,
+    reviews: 45,
+    specifications: {
+      material: 'Or jaune 18k',
+      gemstone: 'Diamants multiples 2ct total',
+      length: '55cm',
+      weight: '8.5g'
+    },
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    name: 'Collier Tiffany Diamonds by the Yard',
+    description: 'Collier inspiré du célèbre design Tiffany avec diamant unique suspendu. Élégance discrète et raffinée.',
+    price: 899,
+    images: ['/images/products/necklace5.jpg'],
+    category: 'necklaces',
+    sellerID: new mongoose.Types.ObjectId(),
+    stockQuantity: 18,
+    status: 'Active',
+    rating: 4.6,
+    reviews: 87,
+    specifications: {
+      material: 'Or blanc 14k',
+      gemstone: 'Diamant 0.3ct',
+      length: '40cm ajustable',
+      weight: '3.5g'
+    },
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
 
-    // Options de connexion optimisées
-    const connectionOptions = {
-      serverSelectionTimeoutMS: 15000,
-      socketTimeoutMS: 45000,
-      maxPoolSize: 10,
-      retryWrites: true,
-      w: 'majority'
-    };
+  // BRACELETS (5 products)
+  {
+    _id: new mongoose.Types.ObjectId(),
+    name: 'Set Bracelets Luxe Or',
+    description: 'Collection de bracelets empilables en or avec différentes textures et finitions. Set de 4 pièces pour un look layered moderne.',
+    price: 1299,
+    images: ['/images/products/bracelet1.jpg'],
+    category: 'bracelets',
+    sellerID: new mongoose.Types.ObjectId(),
+    stockQuantity: 10,
+    status: 'Active',
+    rating: 4.7,
+    reviews: 134,
+    specifications: {
+      material: 'Or 18k',
+      gemstone: 'Diamants pavés',
+      size: 'Ajustable 16-19cm',
+      weight: '12.3g (set complet)'
+    },
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    name: 'Bracelets Boho Empilables',
+    description: 'Bracelets bohème chic avec perles dorées et détails en or 14k. Parfaits pour un style décontracté élégant.',
+    price: 599,
+    images: ['/images/products/bracelet2.jpg'],
+    category: 'bracelets',
+    sellerID: new mongoose.Types.ObjectId(),
+    stockQuantity: 25,
+    status: 'Active',
+    rating: 4.5,
+    reviews: 189,
+    specifications: {
+      material: 'Or 14k et perles',
+      gemstone: 'Perles naturelles',
+      size: 'Élastique universel',
+      weight: '8.7g'
+    },
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    name: 'Bracelet Gemmes Luxe',
+    description: 'Bracelet stretch avec gemmes colorées et or 14k. Design artisanal avec pierres semi-précieuses sélectionnées.',
+    price: 799,
+    images: ['/images/products/bracelet3.jpg'],
+    category: 'bracelets',
+    sellerID: new mongoose.Types.ObjectId(),
+    stockQuantity: 8,
+    status: 'Active',
+    rating: 4.8,
+    reviews: 76,
+    specifications: {
+      material: 'Or 14k',
+      gemstone: 'Gemmes mixtes',
+      size: 'Stretch 15-20cm',
+      weight: '15.2g'
+    },
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    name: 'Collection Bracelets Élégants',
+    description: 'Ensemble de bracelets raffinés en or et argent avec diamants. Design contemporain pour femme moderne.',
+    price: 1599,
+    images: ['/images/products/bracelet4.jpg'],
+    category: 'bracelets',
+    sellerID: new mongoose.Types.ObjectId(),
+    stockQuantity: 6,
+    status: 'Active',
+    rating: 4.9,
+    reviews: 52,
+    specifications: {
+      material: 'Or et argent',
+      gemstone: 'Diamants',
+      size: 'Ajustable',
+      weight: '18.5g'
+    },
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    name: 'Bracelets Tendance Oak & Luna',
+    description: 'Bracelets fashion tendance avec design moderne et finitions soignées. Parfaits pour accessoiriser toute tenue.',
+    price: 399,
+    images: ['/images/products/bracelet5.jpg'],
+    category: 'bracelets',
+    sellerID: new mongoose.Types.ObjectId(),
+    stockQuantity: 30,
+    status: 'Active',
+    rating: 4.4,
+    reviews: 245,
+    specifications: {
+      material: 'Métal doré',
+      gemstone: 'Cristaux',
+      size: 'Ajustable',
+      weight: '6.8g'
+    },
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
 
-    // Tentative de connexion à Atlas d'abord, puis local
-    let connected = false;
-    let connectionSource = '';
-
-    if (ATLAS_URI) {
-      try {
-        console.log('🌐 Connexion à MongoDB Atlas...');
-        await mongoose.connect(ATLAS_URI, connectionOptions);
-        connected = true;
-        connectionSource = 'MongoDB Atlas';
-        console.log('✅ Connecté à MongoDB Atlas avec succès');
-      } catch (error) {
-        console.log('❌ Échec de connexion à Atlas:', error.message);
-        console.log('🔄 Tentative de connexion locale...');
-      }
-    }
-
-    if (!connected) {
-      try {
-        await mongoose.connect(LOCAL_URI, connectionOptions);
-        connected = true;
-        connectionSource = 'MongoDB Local';
-        console.log('✅ Connecté à MongoDB local avec succès');
-      } catch (error) {
-        console.error('❌ Impossible de se connecter à MongoDB:', error.message);
-        process.exit(1);
-      }
-    }
-
-    console.log(`📊 Source de données: ${connectionSource}`);
-    console.log(`📊 Base de données: ${mongoose.connection.name}`);
-
-    // Vérifier si les données existent déjà
-    const existingProducts = await Product.countDocuments();
-    const existingCategories = await Category.countDocuments();
-    const existingUsers = await User.countDocuments();
-
-    console.log(`📊 Données existantes: ${existingProducts} produits, ${existingCategories} catégories, ${existingUsers} utilisateurs`);
-
-    // Peupler les catégories si elles n'existent pas
-    if (existingCategories === 0) {
-      console.log('📝 Ajout des catégories...');
-      try {
-        // Insérer une par une pour éviter les conflits de slug
-        for (const category of mockCategories) {
-          try {
-            await Category.create(category);
-          } catch (error) {
-            if (error.code === 11000) {
-              console.log(`⚠️  Catégorie "${category.categoryName}" déjà existante, ignorée`);
-            } else {
-              throw error;
-            }
-          }
-        }
-        console.log(`✅ Catégories traitées avec succès`);
-      } catch (error) {
-        console.error('❌ Erreur lors de l\'ajout des catégories:', error.message);
-      }
-    } else {
-      console.log('ℹ️  Catégories déjà présentes, passage ignoré');
-    }
-
-    // Peupler les utilisateurs si ils n'existent pas
-    if (existingUsers === 0) {
-      console.log('👥 Ajout des utilisateurs...');
-      try {
-        // Insérer un par un pour éviter les conflits
-        for (const user of mockUsers) {
-          try {
-            await User.create(user);
-          } catch (error) {
-            if (error.code === 11000) {
-              console.log(`⚠️  Utilisateur "${user.email}" déjà existant, ignoré`);
-            } else {
-              throw error;
-            }
-          }
-        }
-        console.log(`✅ Utilisateurs traités avec succès`);
-      } catch (error) {
-        console.error('❌ Erreur lors de l\'ajout des utilisateurs:', error.message);
-      }
-    } else {
-      console.log('ℹ️  Utilisateurs déjà présents, passage ignoré');
-    }
-
-    // Peupler les produits si ils n'existent pas
-    if (existingProducts === 0) {
-      console.log('🛍️  Ajout des produits...');
-      try {
-        // Insérer par lots pour optimiser
-        await Product.insertMany(mockProducts, { ordered: false });
-        console.log(`✅ ${mockProducts.length} produits ajoutés`);
-      } catch (error) {
-        if (error.name === 'MongoBulkWriteError') {
-          const insertedCount = error.result.insertedCount;
-          console.log(`✅ ${insertedCount} produits ajoutés (certains ignorés car déjà existants)`);
-        } else {
-          throw error;
-        }
-      }
-    } else {
-      console.log('ℹ️  Produits déjà présents, passage ignoré');
-    }
-
-    // Statistiques finales
-    const finalProducts = await Product.countDocuments();
-    const finalCategories = await Category.countDocuments();
-    const finalUsers = await User.countDocuments();
-
-    console.log('\n📊 STATISTIQUES FINALES:');
-    console.log(`   • Produits: ${finalProducts}`);
-    console.log(`   • Catégories: ${finalCategories}`);
-    console.log(`   • Utilisateurs: ${finalUsers}`);
-    console.log(`   • Source: ${connectionSource}`);
-
-    console.log('\n✅ Population de la base de données terminée avec succès!');
-
-  } catch (error) {
-    console.error('❌ Erreur lors du peuplement:', error.message);
-    console.error('Stack trace:', error.stack);
-    process.exit(1);
-  } finally {
-    // Fermer la connexion
-    if (mongoose.connection.readyState === 1) {
-      await mongoose.connection.close();
-      console.log('🔌 Connexion fermée');
-    }
+  // EARRINGS (5 products)
+  {
+    _id: new mongoose.Types.ObjectId(),
+    name: 'Boucles d\'Oreilles Diamant Classiques',
+    description: 'Puces d\'oreilles classiques avec diamants ronds brillants. Design intemporel parfait pour toutes les occasions.',
+    price: 1199,
+    images: ['/images/products/earring1.jpg'],
+    category: 'earrings',
+    sellerID: new mongoose.Types.ObjectId(),
+    stockQuantity: 12,
+    status: 'Active',
+    rating: 4.8,
+    reviews: 167,
+    specifications: {
+      material: 'Or blanc 14k',
+      gemstone: 'Diamants 0.5ct total',
+      size: '5mm',
+      weight: '1.8g'
+    },
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    name: 'Boucles Pendantes Diamant Poire',
+    description: 'Boucles d\'oreilles pendantes avec diamants ronds et poires. Design élégant pour les événements spéciaux.',
+    price: 2599,
+    images: ['/images/products/earring2.jpg'],
+    category: 'earrings',
+    sellerID: new mongoose.Types.ObjectId(),
+    stockQuantity: 4,
+    status: 'Active',
+    rating: 4.9,
+    reviews: 83,
+    specifications: {
+      material: 'Or blanc 18k',
+      gemstone: 'Diamants 1.2ct total',
+      size: '25mm longueur',
+      weight: '4.2g'
+    },
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    name: 'Puces Diamant Or Jaune',
+    description: 'Puces d\'oreilles en or jaune avec diamants sertis 4 griffes. Style classique et intemporel.',
+    price: 899,
+    images: ['/images/products/earring3.jpg'],
+    category: 'earrings',
+    sellerID: new mongoose.Types.ObjectId(),
+    stockQuantity: 20,
+    status: 'Active',
+    rating: 4.6,
+    reviews: 198,
+    specifications: {
+      material: 'Or jaune 14k',
+      gemstone: 'Diamants 0.4ct total',
+      size: '4mm',
+      weight: '1.5g'
+    },
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    name: 'Boucles Fleur Multi-Diamants',
+    description: 'Boucles d\'oreilles en forme de fleur avec multiples diamants. Design féminin et sophistiqué.',
+    price: 1799,
+    images: ['/images/products/earring4.jpg'],
+    category: 'earrings',
+    sellerID: new mongoose.Types.ObjectId(),
+    stockQuantity: 7,
+    status: 'Active',
+    rating: 4.7,
+    reviews: 124,
+    specifications: {
+      material: 'Or blanc 14k',
+      gemstone: 'Diamants 0.8ct total',
+      size: '8mm',
+      weight: '2.8g'
+    },
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    name: 'Boucles Diamant Jaune Fancy',
+    description: 'Boucles d\'oreilles avec diamants jaunes fancy dans un sertissage or blanc. Pièce rare et précieuse.',
+    price: 4599,
+    images: ['/images/products/earring5.jpg'],
+    category: 'earrings',
+    sellerID: new mongoose.Types.ObjectId(),
+    stockQuantity: 2,
+    status: 'Active',
+    rating: 5.0,
+    reviews: 28,
+    specifications: {
+      material: 'Or blanc 18k',
+      gemstone: 'Diamants jaunes 1.5ct total',
+      size: '12mm',
+      weight: '5.2g'
+    },
+    createdAt: new Date(),
+    updatedAt: new Date()
   }
+];
+
+// Mock users data
+const mockUsers = [
+  {
+    _id: new mongoose.Types.ObjectId(),
+    username: 'adminUser',
+    email: 'admin@almas-dimas.com',
+    role: 'Admin',
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    username: 'sellerUser',
+    email: 'seller@almas-dimas.com',
+    role: 'Seller',
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    username: 'clientUser',
+    email: 'client@almas-dimas.com',
+    role: 'Buyer',
+    createdAt: new Date(),
+    updatedAt: new Date()
+  }
+];
+
+// Mock categories
+const mockCategories = [
+  {
+    _id: new mongoose.Types.ObjectId(),
+    categoryName: 'rings',
+    displayName: 'Bagues',
+    description: 'Bagues de fiançailles, alliances et bagues de mode',
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    categoryName: 'necklaces',
+    displayName: 'Colliers',
+    description: 'Colliers, pendentifs et chaînes',
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    categoryName: 'bracelets',
+    displayName: 'Bracelets',
+    description: 'Bracelets, bangles et bracelets de charme',
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    categoryName: 'earrings',
+    displayName: 'Boucles d\'oreilles',
+    description: 'Puces, créoles et boucles pendantes',
+    createdAt: new Date(),
+    updatedAt: new Date()
+  }
+];
+
+// Functions to get data
+const getAllProducts = () => {
+  return products.map(product => ({
+    ...product,
+    _id: product._id.toString(),
+    sellerID: product.sellerID.toString()
+  }));
 };
 
-// Exécuter le script si appelé directement
-if (require.main === module) {
-  populateAtlas();
-}
+const getProductById = (id) => {
+  const product = products.find(p => p._id.toString() === id);
+  if (product) {
+    return {
+      ...product,
+      _id: product._id.toString(),
+      sellerID: product.sellerID.toString()
+    };
+  }
+  return null;
+};
 
-module.exports = { populateAtlas };
+const getProductsByCategory = (category) => {
+  return products
+    .filter(p => p.category === category)
+    .map(product => ({
+      ...product,
+      _id: product._id.toString(),
+      sellerID: product.sellerID.toString()
+    }));
+};
+
+module.exports = {
+  mockUsers,
+  mockProducts: products,
+  mockCategories,
+  getAllProducts,
+  getProductById,
+  getProductsByCategory
+};
